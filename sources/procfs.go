@@ -68,6 +68,9 @@ const (
 	//repeated strings replaced by constants
 	mdStats          string = "md_stats"
 	encryptPagePools string = "encrypt_page_pools"
+
+	//Export string metric type
+	export 		string = "export_stats"
 )
 
 var (
@@ -157,6 +160,17 @@ func (s *lustreProcfsSource) generateOSTMetricTemplates(filter string) {
 			{"tot_dirty", "exports_dirty_total", "Total number of exports that have been marked dirty", s.counterMetric, false, core},
 			{"tot_granted", "exports_granted_total", "Total number of exports that have been marked granted", s.counterMetric, false, core},
 			{"tot_pending", "exports_pending_total", "Total number of exports that have been marked pending", s.counterMetric, false, core},
+		},
+		"obdfilter/*/exports/*": {
+			{"stats", "export_read_samples_total", readSamplesHelp, s.counterMetric, false, core},
+			{"stats", "export_read_minimum_size_bytes", readMinimumHelp, s.gaugeMetric, false, extended},
+			{"stats", "export_read_maximum_size_bytes", readMaximumHelp, s.gaugeMetric, false, extended},
+			{"stats", "export_read_bytes_total", readTotalHelp, s.counterMetric, false, core},
+			{"stats", "export_write_samples_total", writeSamplesHelp, s.counterMetric, false, core},
+			{"stats", "export_write_minimum_size_bytes", writeMinimumHelp, s.gaugeMetric, false, extended},
+			{"stats", "export_write_maximum_size_bytes", writeMaximumHelp, s.gaugeMetric, false, extended},
+			{"stats", "export_write_bytes_total", writeTotalHelp, s.counterMetric, false, core},
+			{"stats", "export_stats_total", statsHelp, s.counterMetric, true, core},
 		},
 		"ldlm/namespaces/filter-*": {
 			{"lock_count", "lock_count_total", "Number of locks", s.counterMetric, false, extended},
@@ -387,27 +401,47 @@ func (s *lustreProcfsSource) Update(ch chan<- prometheus.Metric) (err error) {
 					return err
 				}
 			default:
-				if metric.filename == stats {
+				if exportStatsPath(path){
+					metricType = export
+				} else if metric.filename == stats {
 					metricType = stats
 				} else if metric.filename == mdStats {
 					metricType = mdStats
 				} else if metric.filename == encryptPagePools {
 					metricType = encryptPagePools
 				}
-				err = s.parseFile(metric.source, metricType, path, directoryDepth, metric.helpText, metric.promName, metric.hasMultipleVals, func(nodeType string, nodeName string, name string, helpText string, value float64, extraLabel string, extraLabelValue string) {
-					if extraLabelValue == "" {
-						ch <- metric.metricFunc([]string{"component", "target"}, []string{nodeType, nodeName}, name, helpText, value)
-					} else {
-						ch <- metric.metricFunc([]string{"component", "target", extraLabel}, []string{nodeType, nodeName, extraLabelValue}, name, helpText, value)
+				if metricType == export{
+					err = s.parseExportFile(metric.source, metricType, path, directoryDepth, metric.helpText, metric.promName, metric.hasMultipleVals, func(nodeType string, nodeName string, exportName string, name string, helpText string, value float64, extraLabel string, extraLabelValue string) {
+						if extraLabelValue == "" {
+							ch <- metric.metricFunc([]string{"component", "target", "exportid"}, []string{nodeType, nodeName, exportName}, name, helpText, value)
+						} else {
+							ch <- metric.metricFunc([]string{"component", "target", "exportid", extraLabel}, []string{nodeType, nodeName, exportName, extraLabelValue}, name, helpText, value)
+						}
+					})
+					if err != nil {
+						return err
 					}
-				})
-				if err != nil {
-					return err
+				} else {
+					err = s.parseFile(metric.source, metricType, path, directoryDepth, metric.helpText, metric.promName, metric.hasMultipleVals, func(nodeType string, nodeName string, name string, helpText string, value float64, extraLabel string, extraLabelValue string) {
+						if extraLabelValue == "" {
+							ch <- metric.metricFunc([]string{"component", "target"}, []string{nodeType, nodeName}, name, helpText, value)
+						} else {
+							ch <- metric.metricFunc([]string{"component", "target", extraLabel}, []string{nodeType, nodeName, extraLabelValue}, name, helpText, value)
+						}
+					})
+					if err != nil {
+						return err
+					}
 				}
 			}
 		}
 	}
 	return nil
+}
+
+func exportStatsPath(path string) bool{
+	exportStatsPath, _ := regexp.MatchString(`/exports/`, path)
+	return exportStatsPath
 }
 
 func getStatsOperationMetrics(statsFile string, promName string, helpText string) (metricList []lustreStatsMetric, err error) {
