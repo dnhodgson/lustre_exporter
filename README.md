@@ -8,14 +8,14 @@
 ## Getting
 
 ```
-go get github.com/HewlettPackard/lustre_exporter
+go get github.com/dnhodgson/lustre_exporter
 ```
 
 ## Building
 
 
 ```
-cd $GOPATH/src/github.com/HewlettPackard/lustre_exporter
+cd $GOPATH/src/github.com/dnhodgson/lustre_exporter
 make
 ```
 
@@ -65,7 +65,3 @@ See the issues tab for all known issues. This project is actively maintained by 
 ## Troubleshooting
 
 In the event that you encounter issues with specific metrics (especially on versions of Lustre older than 2.7), please try disabling those specific troublesome metrics using the documented collector flags in the 'disabled' or 'core' state. Users have encountered bugs within Lustre where specific sysfs and procfs files miscommunicate their sizes, causing read calls to fail.
-
-## Contributing
-
-To contribute to this HPE project, you'll need to fill out a CLA (Contributor License Agreement). If you would like to contribute anything more than a bug fix (feature, architectural change, etc), please file an issue and we'll get in touch with you to have you fill out the CLA. 
