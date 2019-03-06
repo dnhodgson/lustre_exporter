@@ -108,6 +108,22 @@ func parseFileElements(path string, directoryDepth int) (name string, nodeName s
 	return name, nodeName, nil
 }
 
+func parseExportFileElements(path string, directoryDepth int) (name string, nodeName string, exportName string, err error) {
+	pathElements := strings.Split(path, "/")
+	pathLen := len(pathElements)
+	if pathLen < 1 {
+		return "", "", "", fmt.Errorf("path did not return at least one element")
+	}
+	name = pathElements[pathLen-1]
+	nodeName = pathElements[pathLen-4-directoryDepth]
+	nodeName = strings.TrimPrefix(nodeName, "filter-")
+	nodeName = strings.TrimSuffix(nodeName, "_UUID")
+	exportName = pathElements[pathLen-2-directoryDepth]
+	exportName = strings.TrimSuffix(exportName, "@tcp")
+	exportName = strings.TrimSuffix(exportName, "@o2ib")
+	return name, nodeName, exportName, nil
+}
+
 func convertToBytes(s string) string {
 	if len(s) < 1 {
 		return s
