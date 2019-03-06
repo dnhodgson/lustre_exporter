@@ -786,6 +786,22 @@ func (s *lustreProcfsSource) parseBRWStats(nodeType string, metricType string, p
 	return nil
 }
 
+func (s *lustreProcfsSource) parseExportFile(nodeType string, metricType string, path string, directoryDepth int, helpText string, promName string, hasMultipleVals bool, handler func(string, string, string, string, string, float64, string, string)) (err error) {
+	_, nodeName, exportName, err := parseExportFileElements(path, directoryDepth)
+	if err != nil {
+		return err
+	}
+	metricList, err := parseStatsFile(helpText, promName, path, hasMultipleVals)
+	if err != nil {
+		return err
+	}
+
+	for _, metric := range metricList {
+		handler(nodeType, nodeName, exportName, metric.title, metric.help, metric.value, metric.extraLabel, metric.extraLabelValue)
+	}
+	return nil
+}
+
 func (s *lustreProcfsSource) parseFile(nodeType string, metricType string, path string, directoryDepth int, helpText string, promName string, hasMultipleVals bool, handler func(string, string, string, string, float64, string, string)) (err error) {
 	_, nodeName, err := parseFileElements(path, directoryDepth)
 	if err != nil {
