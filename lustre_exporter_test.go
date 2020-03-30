@@ -1189,6 +1189,28 @@ func TestCollector(t *testing.T) {
 		{"lustre_sync_journal_enabled", "Binary indicator as to whether or not the journal is set for asynchronous commits", gauge, []labelPair{{"component", "ost"}, {"target", "lustrefs-OST0000"}}, 0, false},
 		{"lustre_blocksize_bytes", "Filesystem block size in bytes", gauge, []labelPair{{"component", "ost"}, {"target", "lustrefs-OST0000"}}, 1.048576e+06, false},
 
+		//OST Export Stats
+		{"lustre_export_write_maximum_size_bytes", "The maximum write size in bytes.", gauge, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.4"}, {"target", "lustrefs-OST0000"}}, 4.194304e+06, false},
+		{"lustre_export_write_bytes_total", "The total number of bytes that have been written.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.4"}, {"target", "lustrefs-OST0000"}}, 1.6552048697344e+13, false},
+		{"lustre_export_write_minimum_size_bytes", "The minimum write size in bytes.", gauge, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.4"}, {"target", "lustrefs-OST0000"}}, 4096, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.2"}, {"operation", "create"}, {"target", "lustrefs-OST0000"}}, 2, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.2"}, {"operation", "create"}, {"target", "lustrefs-OST0002"}}, 2, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.2"}, {"operation", "create"}, {"target", "lustrefs-OST0004"}}, 2, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.2"}, {"operation", "create"}, {"target", "lustrefs-OST0006"}}, 2, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.2"}, {"operation", "ping"}, {"target", "lustrefs-OST0000"}}, 1, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.2"}, {"operation", "ping"}, {"target", "lustrefs-OST0002"}}, 1, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.2"}, {"operation", "ping"}, {"target", "lustrefs-OST0004"}}, 1, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.2"}, {"operation", "ping"}, {"target", "lustrefs-OST0006"}}, 1, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.2"}, {"operation", "statfs"}, {"target", "lustrefs-OST0000"}}, 35359, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.2"}, {"operation", "statfs"}, {"target", "lustrefs-OST0002"}}, 35354, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.2"}, {"operation", "statfs"}, {"target", "lustrefs-OST0004"}}, 35350, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.2"}, {"operation", "statfs"}, {"target", "lustrefs-OST0006"}}, 35347, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.4"}, {"operation", "ping"}, {"target", "lustrefs-OST0000"}}, 140, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.4"}, {"operation", "ping"}, {"target", "lustrefs-OST0002"}}, 644, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.4"}, {"operation", "ping"}, {"target", "lustrefs-OST0004"}}, 644, false},
+		{"lustre_export_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.4"}, {"operation", "ping"}, {"target", "lustrefs-OST0006"}}, 644, false},
+		{"lustre_export_write_samples_total", "Total number of writes that have been recorded.", counter, []labelPair{{"component", "ost"}, {"exportid", "172.20.20.4"}, {"target", "lustrefs-OST0000"}}, 4.298711e+06, false},
+
 		// MDT Metrics
 		{"lustre_job_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "mdt"}, {"jobid", "43"}, {"operation", "close"}, {"target", "lustrefs-MDT0000"}}, 0, false},
 		{"lustre_job_stats_total", "Number of operations the filesystem has performed.", counter, []labelPair{{"component", "mdt"}, {"jobid", "43"}, {"operation", "crossdir_rename"}, {"target", "lustrefs-MDT0000"}}, 0, false},
